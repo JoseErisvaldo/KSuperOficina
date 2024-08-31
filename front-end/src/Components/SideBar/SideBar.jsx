@@ -10,6 +10,7 @@ import {
 import { ScrollArea } from '../ui/scroll-area'
 import { cn } from '../../lib/lib/utils'
 import { Button } from '../ui/button'
+import { Link } from 'react-router-dom'
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false)
@@ -33,9 +34,8 @@ export default function Sidebar() {
       <ScrollArea className="flex-grow">
         <nav className="space-y-2 p-2">
           <NavItem icon={<LayoutDashboard className="h-5 w-5" />} label="Dashboard" collapsed={collapsed} />
-          <NavItem icon={<ShoppingCart className="h-5 w-5" />} label="Products" collapsed={collapsed} />
-          <NavItem icon={<Users className="h-5 w-5" />} label="Customers" collapsed={collapsed} />
-          <NavItem icon={<Settings className="h-5 w-5" />} label="Settings" collapsed={collapsed} />
+          <NavItem icon={<ShoppingCart className="h-5 w-5" />} label="Produtos" collapsed={collapsed} />
+          <NavItem icon={<Settings className="h-5 w-5" />} label="Configurações" collapsed={collapsed} />
         </nav>
       </ScrollArea>
       <div className="p-4 border-t border-gray-700">
@@ -61,15 +61,17 @@ export default function Sidebar() {
 
 function NavItem({ icon, label, collapsed }) {
   return (
-    <Button 
-      variant="ghost" 
-      className={cn(
-        "w-full flex justify-center items-center",
-        collapsed ? "px-2" : "px-4"
-      )}
-    >
-      {icon}
-      {!collapsed && <span className="ml-2">{label}</span>}
-    </Button>
+    <Link to={`/${label}`} >
+      <Button 
+        variant="ghost" 
+        className={cn(
+          "w-full flex justify-center items-center mt-2",
+          collapsed ? "px-2" : "px-4"
+        )}
+      >
+        {icon}
+        {!collapsed && <span className="ml-2">{label}</span>}
+      </Button>
+    </Link>
   )
 }
