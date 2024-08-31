@@ -1,10 +1,13 @@
 // react-frontend/src/App.js
 import React from 'react';
+import RoutesApp from './RoutesApp';
 
 function App() {
  
 
-  return <div className="bg-slate-700">Hello,</div>;
+  return <div>
+    <RoutesApp />
+  </div>;
 }
 
 export default App;
