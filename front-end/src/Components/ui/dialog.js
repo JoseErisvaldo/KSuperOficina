@@ -22,9 +22,10 @@ export function Dialog({ children }) {
 }
 
 export function DialogTrigger({ asChild, onClick, children }) {
-  return asChild ? React.cloneElement(children, { onClick }) : <button onClick={onClick}>{children}</button>;
+  return asChild
+    ? React.cloneElement(children, { onClick })
+    : <button onClick={onClick}>{children}</button>;
 }
-
 export function DialogContent({ open, onClose, children }) {
   if (!open) return null;
 
