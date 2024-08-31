@@ -5,23 +5,37 @@ import { useState } from 'react'
 import AddProducts from '../../Components/Products/AddProducts'
 import { Container } from '../../Components/ui/container'
 import H1 from '../../Components/ui/h1'
+import StockTable from '../../Components/Products/StockTable'
 
 export default function Products() {
-  const [naigation, setNaigation] = useState("catalogo")
+  const [naigation, setNaigation] = useState("catalog")
   
   return (
     <Container>
       <Navigation >
-        <CardNavigation onClick={() => setNaigation("catalogo")} text={"Catalogo"} />
-        <CardNavigation text={"Estoque"} />
-        <CardNavigation text={"Disponibilidade de Estoque"} />
+        <CardNavigation onClick={() => setNaigation("catalog")} text={"Catalogo"} />
+        <CardNavigation onClick={() => setNaigation("stock")} text={"Estoque"} />
+        <CardNavigation onClick={() => setNaigation("stockAvailability")} text={"Disponibilidade de Estoque"} />
       </Navigation>
-      
-      <div className=''>
+      {naigation === "catalog" 
+        && <div className=''>
         <H1>Catalogo</H1>
         <AddProducts />
       <ProductsTable />
-      </div>
+      </div>}
+
+      {naigation === "stock" 
+        && <div className=''>
+        <H1>Estoque</H1>
+      <StockTable />
+      </div>}
+
+      {naigation === "stockAvailability" 
+        && <div className=''>
+        <H1>Disponibilidade de Estoque</H1>
+      <ProductsTable />
+      </div>}
+      
     </Container>
   )
 }
