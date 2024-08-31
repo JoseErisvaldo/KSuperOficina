@@ -4,8 +4,13 @@ import React, { useEffect } from 'react';
 function App() {
   async function getData() {
     try {
+      // Define a URL do backend
+      const apiUrl = process.env.REACT_APP_SUPABASE_URL
+        ? `${process.env.REACT_APP_SUPABASE_URL}/api/posts`
+        : 'http://localhost:3000/api/posts';
+
       // Faz a chamada para o middleware no servidor Express
-      const res = await fetch('http://localhost:3000/api/posts');
+      const res = await fetch(apiUrl);
       if (!res.ok) {
         console.error('Error fetching data:', res.statusText);
         return;
