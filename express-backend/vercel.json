@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "express-backend/src/index.js", "use": "@vercel/node" },
+    { "src": "react-frontend/package.json", "use": "@vercel/static-build", "config": { "distDir": "react-frontend/build" } }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "express-backend/src/index.js" },
+    { "src": "/(.*)", "dest": "react-frontend/build/$1" }
+  ]
+}
