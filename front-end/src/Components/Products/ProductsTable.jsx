@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { useProducts } from "../../Endpoints/useCombinedData/useProducts"
-
+import { formatPrice } from "../ui/formatPrice"
 
 export default function ProductsTable() {
   const { data} = useProducts()
@@ -13,6 +13,7 @@ export default function ProductsTable() {
   const [newCatalog, setNewCatalog] = useState({ name: '', description: '' })
   const [editingCatalog, setEditingCatalog] = useState(null)
 
+
   return (
     <Table>
     <TableHeader>
@@ -20,6 +21,7 @@ export default function ProductsTable() {
         <TableHead>Ean</TableHead>
         <TableHead>Nome</TableHead>
         <TableHead>Descrição</TableHead>
+        <TableHead>Preço</TableHead>
         <TableHead>Seller</TableHead>
         <TableHead>Empresa</TableHead>
         <TableHead>Site</TableHead>
@@ -32,6 +34,7 @@ export default function ProductsTable() {
           <TableCell>{catalog.ean}</TableCell>
           <TableCell>{catalog.name}</TableCell>
           <TableCell>{catalog.description}</TableCell>
+          <TableCell>{formatPrice(catalog.price)}</TableCell>
           <TableCell>{catalog.seller.name}</TableCell>
           <TableCell>{catalog.seller.company}</TableCell>
           <TableCell>{catalog.seller.site}</TableCell>
