@@ -1,6 +1,3 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../../Components/ui/dialog'
-import { Button } from '../../Components/ui/button'
-import { Input } from '../../Components/ui/input'
 import ProductsTable from '../../Components/Products/ProductsTable'
 import Navigation from '../../Components/Navigation/Navigation'
 import { CardNavigation } from '../../Components/Navigation/CardNavigarion'
@@ -20,12 +17,11 @@ export default function Products() {
         <CardNavigation text={"Disponibilidade de Estoque"} />
       </Navigation>
       
-      <div className='w-full'>
+      <div className=''>
         <H1>Catalogo</H1>
         <AddProducts />
       <ProductsTable />
       </div>
-      
     </Container>
   )
 }
