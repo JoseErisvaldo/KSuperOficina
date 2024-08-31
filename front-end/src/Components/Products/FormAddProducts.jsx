@@ -34,15 +34,6 @@ export default function FormAddProduct() {
     };
     try {
       const response = await api.post('/products', formattedData);
-      console.log('Produto cadastrado:', response.data);
-      setFormData({
-        name: '',
-        description: '',
-        price: '',
-        category: '',
-        ean: '',
-        seller: ''
-      });
   
     } catch (error) {
       console.error('Error submitting form data:', error);
