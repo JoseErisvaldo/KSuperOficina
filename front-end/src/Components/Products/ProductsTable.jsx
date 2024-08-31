@@ -3,13 +3,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
+import { useProducts } from "../../Endpoints/useCombinedData/useProducts"
 
 
 export default function ProductsTable() {
-  const [catalogs, setCatalogs] = useState([
-    { id: 1, name: 'Verão 2023', description: 'Coleção de verão' },
-    { id: 2, name: 'Inverno 2023', description: 'Coleção de inverno' },
-  ])
+  const { data} = useProducts()
+  console.log(data)
 
   const [newCatalog, setNewCatalog] = useState({ name: '', description: '' })
   const [editingCatalog, setEditingCatalog] = useState(null)
@@ -18,16 +17,24 @@ export default function ProductsTable() {
     <Table>
     <TableHeader>
       <TableRow>
+        <TableHead>Ean</TableHead>
         <TableHead>Nome</TableHead>
         <TableHead>Descrição</TableHead>
+        <TableHead>Seller</TableHead>
+        <TableHead>Empresa</TableHead>
+        <TableHead>Site</TableHead>
         <TableHead>Ações</TableHead>
       </TableRow>
     </TableHeader>
     <TableBody>
-      {catalogs.map((catalog) => (
+      {data.map((catalog) => (
         <TableRow key={catalog.id}>
+          <TableCell>{catalog.ean}</TableCell>
           <TableCell>{catalog.name}</TableCell>
           <TableCell>{catalog.description}</TableCell>
+          <TableCell>{catalog.seller.name}</TableCell>
+          <TableCell>{catalog.seller.company}</TableCell>
+          <TableCell>{catalog.seller.site}</TableCell>
           <TableCell>
             <Dialog>
               <DialogTrigger asChild>
