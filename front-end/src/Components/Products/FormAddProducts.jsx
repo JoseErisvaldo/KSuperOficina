@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
+import { useCategoriesGet } from '../../Endpoints/Single/Categories/useCategoriesGet';
+import { useSellersGet } from '../../Endpoints/Single/Sellers/useSellersGet';
+import api from '../../Server/api';
+
 
 export default function FormAddProduct() {
+  const {categories, loading: loadingCategories} = useCategoriesGet();
+  const {sellers, loading: loadingSellers} = useSellersGet();
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     price: '',
-    category: '',
+    category_id: '',
+    ean: '',
+    seller: ''
   });
 
   const handleChange = (e) => {
@@ -13,30 +22,45 @@ export default function FormAddProduct() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
-    console.log('Produto cadastrado:', formData);
-    setFormData({
-      name: '',
-      description: '',
-      price: '',
-      category: 'bicycles',
-    });
-  };
-
+    const formattedData = {
+      name: formData.name,
+      description: formData.description || null,
+      category_id: formData.category ? parseInt(formData.category, 10) : null,
+      price: formData.price ? parseFloat(formData.price) : null,
+      ean: formData.ean || null, // Set null if not provided
+      seller: formData.seller ? parseInt(formData.seller, 10) : null
+    };
+    try {
+      const response = await api.post('/products', formattedData);
+      console.log('Produto cadastrado:', response.data);
+      setFormData({
+        name: '',
+        description: '',
+        price: '',
+        category: '',
+        ean: '',
+        seller: ''
+      });
+  
+    } catch (error) {
+      console.error('Error submitting form data:', error);
+    }
+  }
   return (
     <form onSubmit={handleSubmit} className="p-4 border rounded-lg bg-white shadow-md space-y-4">
       <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="ean" className="block text-sm font-medium text-gray-700">
           EAN
         </label>
         <input
           type="text"
-          id="name"
-          name="name"
-          value={formData.name}
+          id="ean"
+          name="ean"
+          value={formData.ean}
           onChange={handleChange}
-          placeholder="Nome do Produto"
+          placeholder="EAN do Produto"
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         />
       </div>
@@ -96,28 +120,32 @@ export default function FormAddProduct() {
           onChange={handleChange}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         >
-          <option value="bicycles">Selecionar categoria</option>
-          <option value="bicycles">Bicicletas</option>
-          <option value="accessories">Acessórios</option>
-          <option value="parts">Peças</option>
+          <option value="">Selecionar categoria</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
         </select>
       </div>
 
       <div>
-        <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="seller" className="block text-sm font-medium text-gray-700">
           Seller
         </label>
         <select
-          id="category"
-          name="category"
-          value={formData.category}
+          id="seller"
+          name="seller"
+          value={formData.seller}
           onChange={handleChange}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         >
-          <option value="bicycles">Selecionar categoria</option>
-          <option value="bicycles">Bicicletas</option>
-          <option value="accessories">Acessórios</option>
-          <option value="parts">Peças</option>
+          <option value="">Selecionar seller</option>
+          {sellers.map((seller) => (
+            <option key={seller.id} value={seller.id}>
+              {seller.name}
+            </option>
+          ))}
         </select>
       </div>
 
