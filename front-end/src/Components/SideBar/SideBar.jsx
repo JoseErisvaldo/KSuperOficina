@@ -1,24 +1,19 @@
-import { useState } from 'react'
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  LayoutDashboard, 
-  Settings, 
-  ShoppingCart, 
-  Users 
-} from "lucide-react"
-import { ScrollArea } from '../ui/scroll-area'
-import { cn } from '../../lib/lib/utils'
-import { Button } from '../ui/button'
-import { Link } from 'react-router-dom'
+// src/Components/SideBar/SideBar.js
+import { ChevronLeft, ChevronRight, LayoutDashboard, Settings, ShoppingCart } from 'lucide-react';
+import { ScrollArea } from '../ui/scroll-area';
+import { cn } from '../../lib/lib/utils';
+import { Button } from '../ui/button';
+import { Link } from 'react-router-dom';
+import { useSidebar } from '../../Contexts/SidebarContext';
 
 export default function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false)
+  const { collapsed, setCollapsed } = useSidebar();
 
   return (
     <div className={cn(
       "flex flex-col h-screen bg-gray-800 text-white transition-all duration-300",
-      collapsed ? "w-20" : "w-64"
+      collapsed ? "w-20" : "w-64",
+      "fixed top-0 left-0 z-50"
     )}>
       <div className="flex items-center justify-between p-4">
         {!collapsed && <h1 className="text-2xl font-bold">Logo</h1>}
@@ -56,12 +51,12 @@ export default function Sidebar() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function NavItem({ icon, label, collapsed }) {
   return (
-    <Link to={`/${label}`} >
+    <Link to={`/${label.toLowerCase()}`}>
       <Button 
         variant="ghost" 
         className={cn(
@@ -73,5 +68,5 @@ function NavItem({ icon, label, collapsed }) {
         {!collapsed && <span className="ml-2">{label}</span>}
       </Button>
     </Link>
-  )
+  );
 }
