@@ -1,5 +1,5 @@
 import { useFetchGet } from "../useFetchGet";
 
-export function useSellerGet() {
-  return useFetchGet('/sellers?select=*');
+export function useSellerGet(page, pageSize) {
+  return useFetchGet('/sellers?select=*', page, pageSize);
 }

@@ -1,30 +1,47 @@
-// src/Endpoints/useFetchGet.js
+import axios from 'axios';
 import { useState, useEffect } from 'react';
-import api from '../Server/api'; // Ajuste o caminho conforme necessário
 
-export function useFetchGet(endpoint) {
+export function useFetchGet(endpoint, page = 1, pageSize = 10) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
     async function fetchData() {
+      const rangeStart = (page - 1) * pageSize;
+      const rangeEnd = page * pageSize - 1;
+
       try {
-        const response = await api.get(endpoint);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/rest/v1${endpoint}`, {
+          headers: {
+            apikey: process.env.REACT_APP_SUPABASE_ANON_KEY,
+            Authorization: `Bearer ${process.env.REACT_APP_SUPABASE_ANON_KEY}`,
+            'Range': `${rangeStart}-${rangeEnd}`,
+            'Range-Unit': 'items',
+          },
+        });
+
         setData(response.data);
-      } catch (error) {
-        if (error.response && error.response.status === 404) {
-          setError(`Não foi possível encontrar os dados para ${endpoint}`);
-        } else {
-          setError('Erro ao buscar dados');
+
+        const contentRange = response.headers['content-range'];
+        if (contentRange) {
+          const totalItems = parseInt(contentRange.split('/')[1], 10);
+          console.log(totalItems);
+          setTotalCount(totalItems);
         }
+        
+        
+
+      } catch (err) {
+        setError(err.message);
       } finally {
         setLoading(false);
       }
     }
 
     fetchData();
-  }, [endpoint]);
+  }, [endpoint, page, pageSize]);
 
-  return { data, loading, error };
+  return { data, loading, error, totalCount };
 }

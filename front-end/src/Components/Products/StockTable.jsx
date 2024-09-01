@@ -1,101 +1,63 @@
-import { useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { useProducts } from "../../Endpoints/useCombinedData/useProducts";
+import { useState } from 'react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
+import { formatPrice } from '../ui/formatPrice';
+import { Button } from '../ui/button';
+import { useProductsGet } from '../../Endpoints/GET/useProductsGet';
+import PaginationControls from '../ui/PaginationControls';
 
 export default function StockTable() {
-  const { data, loading, error } = useProducts();
-  const [editingCatalog, setEditingCatalog] = useState(null);
-
-  const handleUpdateCatalog = () => {
-    // Implement your update logic here
-    console.log("Updating catalog:", editingCatalog);
-    // Clear the editing state after update
-    setEditingCatalog(null);
-  };
-
-  const handleDeleteCatalog = (id) => {
-    // Implement your delete logic here
-    console.log("Deleting catalog with id:", id);
-  };
+  const [page, setPage] = useState(1);
+  const pageSize = 5;
+  const { data, loading, error, totalCount } = useProductsGet(page, pageSize);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
+  const totalPages = Math.ceil(totalCount / pageSize);
+  console.log(totalCount)
   return (
-    <div className="overflow-x-auto overflow-y-auto">
-      <div className="min-w-full">
-        <Table className="min-w-full">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Ean</TableHead>
-              <TableHead>Nome</TableHead>
-              <TableHead>Descrição</TableHead>
-              <TableHead>Endereço</TableHead>
-              <TableHead>Quantidade</TableHead>
-              <TableHead>Seller</TableHead>
-              <TableHead>Empresa</TableHead>
-              <TableHead>Site</TableHead>
-              <TableHead>Ações</TableHead>
+    <div className="p-4 flex flex-col h-full justify-between">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Ean</TableHead>
+            <TableHead>Nome</TableHead>
+            <TableHead>Descrição</TableHead>
+            <TableHead>Endereço</TableHead>
+            <TableHead>Quantidade</TableHead>
+            <TableHead>Preço</TableHead>
+            <TableHead>Seller</TableHead>
+            <TableHead>Empresa</TableHead>
+            <TableHead>Site</TableHead>
+            <TableHead>Ações</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {data.map(product => (
+            <TableRow key={product.id}>
+              <TableCell>{product.ean}</TableCell>
+              <TableCell>{product.name}</TableCell>
+              <TableCell>{product.description}</TableCell>
+              <TableCell>{product.inventory[0]?.location?.location_name || ''}</TableCell>
+              <TableCell>{product.inventory[0]?.quantity || 0}</TableCell>
+              <TableCell>{formatPrice(product.price)}</TableCell>
+              <TableCell>{product.seller.name}</TableCell>
+              <TableCell>{product.seller.company}</TableCell>
+              <TableCell>{product.seller.site}</TableCell>
+              <TableCell>
+                <Button variant="outline" size="icon">Editar</Button>
+                <Button variant="outline" size="icon">Excluir</Button>
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {data.map((catalog) => (
-              <TableRow key={catalog.id}>
-                <TableCell>{catalog.ean}</TableCell>
-                <TableCell>{catalog.name}</TableCell>
-                <TableCell>{catalog.description}</TableCell>
-                <TableCell>{catalog.inventory[0]?.location?.location_name || ''}</TableCell>
-                <TableCell>{catalog.inventory[0]?.quantity || 0}</TableCell>
-                <TableCell>{catalog.seller?.name || 'N/A'}</TableCell>
-                <TableCell>{catalog.seller?.company || 'N/A'}</TableCell>
-                <TableCell>{catalog.seller?.site || 'N/A'}</TableCell>
-                <TableCell>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="mr-2"
-                        onClick={() => setEditingCatalog(catalog)}
-                      >
-                        Editar
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Editar Catálogo</DialogTitle>
-                      </DialogHeader>
-                      <div className="grid gap-4 py-4">
-                        <Input
-                          placeholder="Nome do Catálogo"
-                          value={editingCatalog?.name || ''}
-                          onChange={(e) => setEditingCatalog({ ...editingCatalog, name: e.target.value })}
-                        />
-                        <Input
-                          placeholder="Descrição"
-                          value={editingCatalog?.description || ''}
-                          onChange={(e) => setEditingCatalog({ ...editingCatalog, description: e.target.value })}
-                        />
-                        <Button onClick={handleUpdateCatalog}>Atualizar</Button>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => handleDeleteCatalog(catalog.id)}
-                  >
-                    Excluir
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+          ))}
+        </TableBody>
+      </Table>
+
+      <PaginationControls
+        currentPage={page} 
+        totalPages={totalPages} 
+        onPageChange={setPage} 
+      />
     </div>
   );
 }

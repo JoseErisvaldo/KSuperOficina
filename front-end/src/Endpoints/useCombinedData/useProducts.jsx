@@ -5,14 +5,15 @@ import { useSellerGet } from '../GET/useSellerGet';
 import { useInventoryGet } from '../GET/useInventoryGet';
 import { useStockLocationsGet } from '../GET/useStockLocationsGet';
 
-export function useProducts() {
+export function useProducts(page = 1, pageSize = 10) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [totalCount, setTotalCount] = useState(0);
   
   const { data: sellers, loading: sellersLoading, error: sellersError } = useSellerGet();
   const { data: categories, loading: categoriesLoading, error: categoriesError } = useCategoriesGet();
-  const { data: products, loading: productsLoading, error: productsError } = useProductsGet();
+  const { data: products, loading: productsLoading, error: productsError } = useProductsGet(page, pageSize);
   const { data: inventory, loading: inventoryLoading, error: inventoryError } = useInventoryGet();
   const { data: stockLocations, loading: stockLocationsLoading, error: stockLocationsError } = useStockLocationsGet();
 
@@ -56,6 +57,9 @@ export function useProducts() {
           }))
         }));
 
+        // Assume the API response includes a `total_count` header
+        const totalItems = parseInt(products.headers['content-range'].split('/')[1], 10);
+        setTotalCount(totalItems);
         setData(combinedData);
       } catch (error) {
         setError('Erro ao buscar dados combinados');
@@ -65,12 +69,12 @@ export function useProducts() {
     }
 
     fetchData();
-  }, [products, categories, sellers, inventory, stockLocations, productsLoading, categoriesLoading, sellersLoading, inventoryLoading, stockLocationsLoading]);
+  }, [page, pageSize, products, categories, sellers, inventory, stockLocations, productsLoading, categoriesLoading, sellersLoading, inventoryLoading, stockLocationsLoading]);
 
   if (sellersError || categoriesError || productsError || inventoryError || stockLocationsError) {
     setError('Erro ao buscar dados');
     setLoading(false);
   }
 
-  return { data, loading, error };
+  return { data, loading, error, totalCount };
 }

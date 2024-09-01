@@ -1,76 +1,60 @@
-import { useState } from "react"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
-import { Button } from "../ui/button"
-import { Input } from "../ui/input"
-import { useProducts } from "../../Endpoints/useCombinedData/useProducts"
-import { formatPrice } from "../ui/formatPrice"
+// ProductsTable.js
+import { useState } from 'react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
+import { formatPrice } from '../ui/formatPrice';
+import { Button } from '../ui/button';
+import { useProductsGet } from '../../Endpoints/GET/useProductsGet';
+import PaginationControls from '../ui/PaginationControls';
 
 export default function ProductsTable() {
-  const { data} = useProducts()
-  console.log(data)
+  const [page, setPage] = useState(1);
+  const pageSize = 7;
+  const { data, loading, error, totalCount } = useProductsGet(page, pageSize);
 
-  const [newCatalog, setNewCatalog] = useState({ name: '', description: '' })
-  const [editingCatalog, setEditingCatalog] = useState(null)
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
+  const totalPages = Math.ceil(totalCount / pageSize);
 
   return (
-    <Table>
-    <TableHeader>
-      <TableRow>
-        <TableHead>Ean</TableHead>
-        <TableHead>Nome</TableHead>
-        <TableHead>Descrição</TableHead>
-        <TableHead>Preço</TableHead>
-        <TableHead>Seller</TableHead>
-        <TableHead>Empresa</TableHead>
-        <TableHead>Site</TableHead>
-        <TableHead>Ações</TableHead>
-      </TableRow>
-    </TableHeader>
-    <TableBody>
-      {data.map((catalog) => (
-        <TableRow key={catalog.id}>
-          <TableCell>{catalog.ean}</TableCell>
-          <TableCell>{catalog.name}</TableCell>
-          <TableCell>{catalog.description}</TableCell>
-          <TableCell>{formatPrice(catalog.price)}</TableCell>
-          <TableCell>{catalog.seller.name}</TableCell>
-          <TableCell>{catalog.seller.company}</TableCell>
-          <TableCell>{catalog.seller.site}</TableCell>
-          <TableCell>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="icon" className="mr-2">
-                  Editar
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Editar Catálogo</DialogTitle>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <Input
-                    placeholder="Nome do Catálogo"
-                    value={'editingCatalog?.name'}
-                    onChange={(e) => setEditingCatalog('{ ...editingCatalog, name: e.target.value }')}
-                  />
-                  <Input
-                    placeholder="Descrição"
-                    value={editingCatalog?.description || ''}
-                    onChange={(e) => setEditingCatalog({ ...editingCatalog, description: e.target.value })}
-                  />
-                  <Button onClick={'updateCatalog'}>Atualizar</Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-            <Button variant="outline" size="icon" onClick={'() => deleteCatalog(catalog.id)'}>
-              Excluir
-            </Button>
-          </TableCell>
-        </TableRow>
-      ))}
-    </TableBody>
-  </Table>
-  )
+    <div className="p-4 justify-between flex flex-col h-full">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Ean</TableHead>
+            <TableHead>Nome</TableHead>
+            <TableHead>Descrição</TableHead>
+            <TableHead>Preço</TableHead>
+            <TableHead>Seller</TableHead>
+            <TableHead>Empresa</TableHead>
+            <TableHead>Site</TableHead>
+            <TableHead>Ações</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {data.map((product) => (
+            <TableRow key={product.id}>
+              <TableCell>{product.ean}</TableCell>
+              <TableCell>{product.name}</TableCell>
+              <TableCell>{product.description}</TableCell>
+              <TableCell>{formatPrice(product.price)}</TableCell>
+              <TableCell>{product.seller.name}</TableCell>
+              <TableCell>{product.seller.company}</TableCell>
+              <TableCell>{product.seller.site}</TableCell>
+              <TableCell>
+                <Button variant="outline" size="icon">Editar</Button>
+                <Button variant="outline" size="icon">Excluir</Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      <PaginationControls
+        currentPage={page} 
+        totalPages={totalPages} 
+        onPageChange={setPage} 
+      />
+    </div>
+  );
 }

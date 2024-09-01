@@ -1,5 +1,5 @@
-import { useFetchGet } from "../useFetchGet";
+import { useFetchGet } from '../useFetchGet';
 
-export function useInventoryGet() {
-  return useFetchGet('/inventory?select=*');
+export function useInventoryGet(page, pageSize) {
+  return useFetchGet('/inventory', page, pageSize);
 }
