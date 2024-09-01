@@ -3,14 +3,13 @@ import { useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { formatPrice } from '../ui/formatPrice';
 import { Button } from '../ui/button';
-import { useProductsGet } from '../../Endpoints/GET/useProductsGet';
 import PaginationControls from '../ui/PaginationControls';
+import { useProducts } from '../../Endpoints/useCombinedData/useProducts';
 
 export default function ProductsTable() {
   const [page, setPage] = useState(1);
   const pageSize = 7;
-  const { data, loading, error, totalCount } = useProductsGet(page, pageSize);
-
+  const { data, loading, error, totalCount } = useProducts(page, pageSize);
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
