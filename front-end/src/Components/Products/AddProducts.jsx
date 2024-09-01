@@ -9,12 +9,12 @@ export default function AddProducts() {
       <Dialog>
         <DialogTrigger asChild>
           <Button className="mb-4">
-             Adicionar Catálogo
+             Adicionar Produto
           </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Adicionar Novo Catálogo</DialogTitle>
+            <DialogTitle> Adicionar Produto</DialogTitle>
           </DialogHeader>
             <FormAddProduct />
           </DialogContent>
