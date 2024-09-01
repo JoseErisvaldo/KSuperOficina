@@ -1,41 +1,70 @@
-import ProductsTable from '../../Components/Products/ProductsTable'
-import Navigation from '../../Components/Navigation/Navigation'
-import { CardNavigation } from '../../Components/Navigation/CardNavigarion'
-import { useState } from 'react'
-import AddProducts from '../../Components/Products/AddProducts'
-import { Container } from '../../Components/ui/container'
-import H1 from '../../Components/ui/h1'
-import StockTable from '../../Components/Products/StockTable'
+// src/Pages/Products.js
+import { useState } from 'react';
+import ProductsTable from '../../Components/Products/ProductsTable';
+import AddProducts from '../../Components/Products/AddProducts';
+import StockTable from '../../Components/Products/StockTable';
+import { Container } from '../../Components/ui/container';
+import H1 from '../../Components/ui/h1';
+import ResponsiveContainer from '../../Components/ui/ResponsiveContainer';
+import NavigationTabs from '../../Components/ui/navigationTabs';
+
+const TABS = [
+  { value: 'catalog', label: 'Catálogo' },
+  { value: 'stock', label: 'Estoque' },
+  { value: 'stockAvailability', label: 'Disponibilidade de Estoque' }
+];
+
+const CONTENT_COMPONENTS = {
+  catalog: () => (
+    <>
+      <ProductsTable />
+    </>
+  ),
+  stock: () => (
+    <>
+      <StockTable />
+    </>
+  ),
+  stockAvailability: () => (
+    <>
+
+      <ProductsTable />
+    </>
+  ),
+};
 
 export default function Products() {
-  const [naigation, setNaigation] = useState("catalog")
-  
+  const [currentTab, setCurrentTab] = useState('catalog');
+
+  const CurrentContent = CONTENT_COMPONENTS[currentTab] || (() => null);
+
   return (
-    <Container>
-      <Navigation >
-        <CardNavigation onClick={() => setNaigation("catalog")} text={"Catalogo"} />
-        <CardNavigation onClick={() => setNaigation("stock")} text={"Estoque"} />
-        <CardNavigation onClick={() => setNaigation("stockAvailability")} text={"Disponibilidade de Estoque"} />
-      </Navigation>
-      {naigation === "catalog" 
-        && <div className=''>
-        <H1>Catalogo</H1>
-        <AddProducts />
-      <ProductsTable />
-      </div>}
-
-      {naigation === "stock" 
-        && <div className=''>
+    <ResponsiveContainer>
+      <NavigationTabs
+        tabs={TABS}
+        currentTab={currentTab}
+        onTabChange={setCurrentTab}
+      />
+      {currentTab === 'catalog' && 
+      <div className='m-2 flex items-center justify-between flex-wrap gap-2'>
+        <H1>Catálogo</H1>
+         <AddProducts />
+      </div>
+      }
+      {currentTab === 'stock' && 
+      <div className='m-2 flex items-center justify-between flex-wrap gap-2'>
         <H1>Estoque</H1>
-      <StockTable />
-      </div>}
+      </div>
+      }
+      {currentTab === 'stockAvailability' && 
+      <div className='m-2 flex items-center justify-between flex-wrap gap-2'>
+        <H1>Disponibilidade do Estoque</H1>
+      </div>
+      }
 
-      {naigation === "stockAvailability" 
-        && <div className=''>
-        <H1>Disponibilidade de Estoque</H1>
-      <ProductsTable />
-      </div>}
-      
-    </Container>
-  )
+      <Container>
+        <CurrentContent />
+      </Container>
+    </ResponsiveContainer>
+  );
 }
