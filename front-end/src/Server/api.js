@@ -1,13 +1,13 @@
 import axios from 'axios';
 
-const SUPABASE_API_URL = process.env.REACT_APP_SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.REACT_APP_SUPABASE_KEY;
+const REACT_APP_API_URL = process.env.REACT_APP_API_URL;
+const REACT_APP_SUPABASE_ANON_KEY = process.env.REACT_APP_SUPABASE_ANON_KEY;
 
 const api = axios.create({
-  baseURL: `${SUPABASE_API_URL}/rest/v1`,
+  baseURL: `${REACT_APP_API_URL}/rest/v1`,
   headers: {
-    apikey: SUPABASE_ANON_KEY,
-    Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+    apikey: REACT_APP_SUPABASE_ANON_KEY,
+    Authorization: `Bearer ${REACT_APP_SUPABASE_ANON_KEY}`,
   },
 });
 
